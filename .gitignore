@@ -1,0 +1,70 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# Build
+dist/
+build/
+.next/
+out/
+.temp/
+.cache/
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Frontend artifacts
+.vite/
+*.tsbuildinfo
+
+# IDEs
+.vscode/
+.idea/
+*.sw?
+*.suo
+*.ntvs_analysis.dat
+*.njsproj
+*.sln
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.db-journal
+/prisma/migrations/*/README.md
+/prisma/generated/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Test
+jest-html-reporters-*.html
+
+# Generated audio or transcripts
+/public/audio/
+public/transcripts/
+
+# Misc
+*.tgz
+*.gz
+*.zip
+*.bak
+*.old
