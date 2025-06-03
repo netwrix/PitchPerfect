@@ -2,56 +2,169 @@
 
 ## 🧠 Project Overview
 
-This project is a voice-based sales simulation web app that uses OpenAI APIs to create lifelike, dynamic sales training scenarios. It includes:
+This is a monorepo for an open-source, AI-powered voice-based sales simulator. The app simulates live, back-and-forth sales conversations with AI personas of varying difficulty (Easy, Medium, Hard) using OpenAI APIs.
 
-- React frontend with Tailwind CSS, Framer Motion, shadcn/ui
-- Voice chat via Whisper and Text-to-Speech APIs
-- Persistent threads, memory, and tool use via the OpenAI Assistants API
-- Microsoft Entra login for user authentication
-- Leaderboard with ratings per user attempt
+Users can interact via voice or chat. The AI responds in real-time, with memory and contextual awareness. Each conversation is scored and displayed on a leaderboard.
 
-## 🎯 Goals for Codex
+The app is deployed to **Render**, with:
 
-When working on this repo, Codex should:
+* **Frontend**: Static Site (`/frontend`)
+* **Backend**: Web Service (`/backend`)
 
-- Prioritize clean, modular React components
-- Use Tailwind and shadcn/ui for all UI elements
-- Keep all OpenAI API integration logic organized in `lib/openai.ts`
-- Use `Whisper` for speech-to-text and `TTS` for text-to-speech
-- Scaffold API endpoints in Express or Fastify with separation of concerns
-- Use Prisma ORM for database access
-- Use OAuth 2.0 via Microsoft Entra ID (Azure AD) for login
+---
 
-## 🗂️ Folder Structure
+## 🎯 Features & Requirements
 
-/frontend → React UI
-/backend → Node.js API server
-/lib → API utilities (OpenAI, Whisper, TTS, etc.)
-/db → Prisma schema & migrations
-/public → Static files
+### 💬 Interaction Modes
 
+* Voice and text chat support
+* Toggle between:
 
-## 🔧 OpenAI Usage Summary
+  * Simplistic voice-only view (microphone + audio output)
+  * Standard chat interface (bubbles, chat history, audio)
 
-- **Whisper API** → Voice input → transcript
-- **Assistants API** → Core agent, tool calling, memory
-- **TTS API** → Agent reply → audio output
-- Optional: `chat/completions` with `stream=true` for fast text fallback
+### 🎭 Sales Personas (Difficulty Levels)
 
-## 🧱 Key Features to Maintain
+* Easy: Friendly, curious prospect
+* Medium: Skeptical technical buyer
+* Hard: Hostile executive (e.g., EU healthcare CISO)
 
-- Toggle between "simplistic" voice-only view and standard chat+voice view
-- Real-time interaction cycle:
-  1. User speaks
-  2. Whisper → text
-  3. Assistant → response
-  4. TTS → reply audio
-- Leaderboard aggregates average ratings per difficulty/persona
-- Microsoft Entra login used to personalize sessions and ratings
+### 🧠 AI Capabilities
 
-## 📌 Notes
+* Uses OpenAI **Assistants API** with persistent threads
+* Voice input via **Whisper API**
+* Voice output via **Text-to-Speech API**
+* Optional: Retrieval-based tool for product/industry knowledge
 
-- All assistants should be persona-driven: Easy, Medium, Hard (CISO, IT Manager, etc.)
-- Tool calling must allow dynamic product info lookup and post-call feedback
-- Track metadata for every attempt: difficulty, user, persona, rating, transcript
+### 🏆 Leaderboard
 
+* Tracks:
+
+  * User name and picture (from Microsoft Entra login)
+  * Attempts per persona
+  * Ratings per difficulty
+  * Average score
+
+---
+
+## 🗂 Folder Structure
+
+```
+/AGENTS.md                ← Codex instruction file
+/.env.example             ← Backend environment template
+/.gitignore
+/frontend/                ← React + Tailwind UI (Vite)
+/backend/                 ← Node.js + Express API (OpenAI, scoring)
+/shared/ (optional)       ← Shared types or logic
+```
+
+---
+
+## ⚙️ Technologies
+
+| Layer    | Tech Stack                                                       |
+| -------- | ---------------------------------------------------------------- |
+| Frontend | React, Tailwind CSS, Vite, shadcn/ui, Framer Motion              |
+| Backend  | Node.js, Express, OpenAI SDK, Microsoft OAuth, Prisma (optional) |
+| AI       | OpenAI Assistants API, Whisper API, Text-to-Speech API           |
+| Auth     | Microsoft Entra ID (OAuth2/OpenID Connect)                       |
+| Hosting  | [Render](https://render.com)                                     |
+| Database | Render-hosted PostgreSQL                                         |
+
+---
+
+## 🚀 Deployment Configuration (Render)
+
+### 🔮 Frontend – Static Site
+
+* **Root Directory**: `frontend`
+* **Build Command**:
+
+  ```bash
+  npm install && npm run build
+  ```
+* **Publish Directory**:
+
+  ```
+  dist
+  ```
+* **Auto Deploy**: Enabled on `main`
+* **Environment Variables**:
+
+  ```env
+  VITE_API_URL=https://voice-sales-backend.onrender.com/api
+  ```
+
+---
+
+### 🧠 Backend – Web Service
+
+* **Root Directory**: `backend`
+* **Build Command**:
+
+  ```bash
+  npm install
+  ```
+* **Start Command**:
+
+  ```bash
+  npm start
+  ```
+* **Runtime**: Node 18+
+* **Auto Deploy**: Enabled on `main`
+
+#### ✅ Backend Environment Variables (`.env.example`)
+
+```env
+OPENAI_API_KEY=sk-...
+ENCRA_CLIENT_ID=...
+ENCRA_CLIENT_SECRET=...
+ENCRA_TENANT_ID=...
+DATABASE_URL=postgres://<user>:<password>@dpg-d0vo0hemcj7s73fqfol0-a/pperfect
+FRONTEND_URL=https://voice-sales-frontend.onrender.com
+SESSION_SECRET=some-random-secret
+```
+
+Set these in the Render UI under **Environment → Add Environment Variable**.
+
+---
+
+## 🧠 Development Notes for Codex
+
+When contributing to this project:
+
+* Scaffold React pages using **Tailwind + shadcn/ui + Framer Motion**
+* Use **React Router** if routes are needed
+* Use `fetch` or `axios` to communicate with the backend at `/api`
+* Backend should expose endpoints for:
+
+  * `/start-session`
+  * `/submit-message`
+  * `/leaderboard`
+* Backend should handle:
+
+  * Calling OpenAI APIs (Assistants, Whisper, TTS)
+  * Caching or storing conversations
+  * Returning scores + persona feedback
+* Use `dotenv` for env vars
+* Store user data and leaderboard stats in PostgreSQL (Prisma optional)
+* Codex may propose `.env.example` updates, Prisma schema, or CI improvements
+* All code should be **modular**, **typed (if TS)**, and **production-ready**
+
+---
+
+## 🧪 Testing & CI
+
+* Tests (if added) should go in `/frontend/__tests__/` and `/backend/__tests__/`
+* GitHub Actions may be added later for:
+
+  * Linting
+  * Backend unit tests
+  * Type checks
+
+---
+
+## 📎 Misc
+
+* Avoid writing to local disk during deploy unless using Render disk
+* CORS should allow \`FRONTEND\_URL
